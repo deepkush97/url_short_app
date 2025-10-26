@@ -3,7 +3,7 @@ import { AppResponse } from '@app/shared/app-response.dto';
 import { BcryptService } from '@app/shared/bcrypt/bcrypt.service';
 import { Injectable } from '@nestjs/common';
 import { UsersService } from '../user/user.service';
-import { INewUser, IUser } from './interfaces/user.interface';
+import { ILoginUser, INewUser, IUser } from './interfaces/user.interface';
 
 @Injectable()
 export class AuthService {
@@ -11,6 +11,7 @@ export class AuthService {
     private userService: UsersService,
     private bcryptService: BcryptService,
   ) {}
+
   async signup({
     name,
     email,
@@ -29,6 +30,41 @@ export class AuthService {
       email,
     });
 
-    return new AppResponse({ code: AppCodes.USER_CREATED, data: user });
+    return new AppResponse({
+      code: AppCodes.USER_CREATED,
+      data: {
+        ...user,
+        password: '',
+      },
+    });
+  }
+
+  async login({ email, password }: ILoginUser): Promise<AppResponse<IUser>> {
+    const existingUser = await this.userService.findByEmail(email, {
+      name: true,
+      password: true,
+      email: true,
+      createdAt: true,
+      id: true,
+    });
+    if (!existingUser) {
+      return new AppResponse({ code: AppCodes.BAD_REQUEST });
+    }
+
+    const isValidPassword = await this.bcryptService.validate(
+      password,
+      existingUser.password,
+    );
+    if (!isValidPassword) {
+      return new AppResponse({ code: AppCodes.INVALID_CREDENTIALS });
+    }
+
+    return new AppResponse({
+      code: AppCodes.OPERATION_SUCCESS,
+      data: {
+        ...existingUser,
+        password: '',
+      },
+    });
   }
 }

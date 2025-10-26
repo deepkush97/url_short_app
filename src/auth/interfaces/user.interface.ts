@@ -1,7 +1,10 @@
-export interface INewUser {
-  name: string;
+export interface ILoginUser {
   email: string;
   password: string;
+}
+
+export interface INewUser extends ILoginUser {
+  name: string;
 }
 
 export interface IUser extends INewUser {
