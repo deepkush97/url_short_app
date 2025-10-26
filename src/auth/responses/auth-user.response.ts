@@ -1,7 +1,8 @@
 import { Exclude, Expose } from 'class-transformer';
+import { IAuthUser } from '../interfaces/auth-user.interface';
 
 @Exclude()
-export class AuthUserResponse {
+export class AuthUserResponse implements IAuthUser {
   @Expose()
   id: number;
 
@@ -13,4 +14,7 @@ export class AuthUserResponse {
 
   @Expose()
   createdAt: Date;
+
+  @Expose()
+  jwtToken: string;
 }

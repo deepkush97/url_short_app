@@ -1,0 +1,43 @@
+### 🌍 Base Environment Variables
+@baseUrl = http://localhost:3000
+@contentType = application/json
+@token = {{login.response.body.data.jwtToken}}   # Auto-injected from login response
+
+# ───────────────────────────────────────────────
+# 🧾 AUTH MODULE ENDPOINTS
+# ───────────────────────────────────────────────
+
+### 🧩 SIGNUP — Register a new user
+# Creates a new user with email + password
+POST {{baseUrl}}/auth/signup
+Content-Type: {{contentType}}
+
+{
+  "email": "john@example.com",
+  "password": "123456"
+}
+
+### 🔑 LOGIN — Authenticate user and receive JWT
+# Returns access_token used for authenticated requests
+# Save response automatically in variable "login"
+# (VSCode REST Client: click “Send Request”)
+# (JetBrains: just run, token is reused from env)
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "deep@example.com",
+  "password": "password"
+}
+
+### 👤 PROFILE — Get logged-in user's info
+# Requires Authorization header with Bearer token
+GET {{baseUrl}}/auth/profile
+Authorization: Bearer {{token}}
+Content-Type: {{contentType}}
+
+### 🚫 INVALID TOKEN TEST — Should return Unauthorized
+GET {{baseUrl}}/auth/profile
+Authorization: Bearer invalid_token
+Content-Type: {{contentType}}
