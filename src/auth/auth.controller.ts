@@ -1,14 +1,8 @@
 import { AppCodes } from '@app/shared/app-codes.enum';
 import { AppResponse } from '@app/shared/app-response.dto';
-import { JwtAuthGuard } from '@app/shared/jwt.guard';
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Request,
-  UseGuards,
-} from '@nestjs/common';
+import { IUser } from '@app/shared/interfaces/users.interface';
+import { Auth, CurrentUser } from '@app/shared/jwt.guard';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginRequest } from './requests/login.request';
 import { SignupRequest } from './requests/signup.request';
@@ -32,12 +26,12 @@ export class AuthController {
     return this.authService.login(body);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @Auth()
   @Get('profile')
-  getProfile(@Request() req) {
+  getProfile(@CurrentUser() user: IUser) {
     return new AppResponse({
       code: AppCodes.OPERATION_SUCCESS,
-      data: req?.user,
+      data: user,
     });
   }
 }

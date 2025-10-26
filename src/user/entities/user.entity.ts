@@ -1,4 +1,4 @@
-import { IUser } from 'src/auth/interfaces/user.interface';
+import { IUser } from '@app/shared/interfaces/users.interface';
 import {
   Column,
   CreateDateColumn,

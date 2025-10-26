@@ -1,5 +1,5 @@
+import { IAuthUser } from '@app/shared/interfaces/auth-user.interface';
 import { Exclude, Expose } from 'class-transformer';
-import { IAuthUser } from '../interfaces/auth-user.interface';
 
 @Exclude()
 export class AuthUserResponse implements IAuthUser {

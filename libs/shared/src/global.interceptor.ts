@@ -18,7 +18,7 @@ export class GlobalInterceptor implements NestInterceptor {
     return next.handle().pipe(
       map((res) => {
         if (!res?.code) {
-          console.log('no AppResponse');
+          console.error('no AppResponse');
         }
         const code = res?.code || AppCodes.INTERNAL_ERROR;
         const status = appCodeToStatusMap[code] || 500;
