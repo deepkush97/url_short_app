@@ -1,0 +1,34 @@
+import { AppCodes } from '@app/shared/app-codes.enum';
+import { AppResponse } from '@app/shared/app-response.dto';
+import { BcryptService } from '@app/shared/bcrypt/bcrypt.service';
+import { Injectable } from '@nestjs/common';
+import { UsersService } from '../user/user.service';
+import { INewUser, IUser } from './interfaces/user.interface';
+
+@Injectable()
+export class AuthService {
+  constructor(
+    private userService: UsersService,
+    private bcryptService: BcryptService,
+  ) {}
+  async signup({
+    name,
+    email,
+    password,
+  }: INewUser): Promise<AppResponse<IUser>> {
+    const isExists = await this.userService.findByEmail(email);
+    if (isExists) {
+      return new AppResponse({ code: AppCodes.INVALID_EMAIL });
+    }
+
+    const hashedPassword = await this.bcryptService.hash(password);
+
+    const user = await this.userService.create({
+      name,
+      password: hashedPassword,
+      email,
+    });
+
+    return new AppResponse({ code: AppCodes.USER_CREATED, data: user });
+  }
+}

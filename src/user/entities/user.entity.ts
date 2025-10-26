@@ -1,0 +1,29 @@
+import { IUser } from 'src/auth/interfaces/user.interface';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+
+@Entity('users')
+export class User implements IUser {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({ length: 100 })
+  name: string;
+
+  @Column({ length: 150, unique: true })
+  email: string;
+
+  @Column({ select: false, length: 200 })
+  password: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+}
