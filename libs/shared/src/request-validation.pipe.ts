@@ -20,11 +20,15 @@ export class RequestValidationPipe extends ValidationPipe {
       exceptionFactory: (errors: ValidationError[]) => {
         const formattedErrors = errors.reduce((acc, err) => {
           acc[err.property] = err.constraints
-            ? Object.keys(err.constraints).map(
-                (constraint) =>
-                  validationErrorToValidationCodeMap[constraint] ??
-                  ValidationErrorCode.UNKNOWN,
-              )
+            ? Object.keys(err.constraints).map((constraint) => {
+                const constraintError =
+                  validationErrorToValidationCodeMap[constraint];
+                if (constraintError) {
+                  return constraintError;
+                }
+                console.log('unknown validation error', constraint);
+                return ValidationErrorCode.UNKNOWN;
+              })
             : [];
           return acc;
         }, {});

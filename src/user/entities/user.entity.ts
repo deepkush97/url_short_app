@@ -1,8 +1,10 @@
 import { IUser } from '@app/shared/interfaces/users.interface';
+import { Task } from 'src/tasks/entities/task.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -26,4 +28,7 @@ export class User implements IUser {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => Task, (task) => task.user)
+  tasks: Task[];
 }

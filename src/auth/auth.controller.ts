@@ -1,7 +1,7 @@
 import { AppCodes } from '@app/shared/app-codes.enum';
 import { AppResponse } from '@app/shared/app-response.dto';
 import { IUserWithoutPasswordAndUpdatedAt } from '@app/shared/interfaces/users.interface';
-import { Auth, CurrentUser } from '@app/shared/jwt.guard';
+import { Authenticated, CurrentUser } from '@app/shared/jwt.guard';
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginRequest } from './requests/login.request';
@@ -26,7 +26,7 @@ export class AuthController {
     return this.authService.login(body);
   }
 
-  @Auth()
+  @Authenticated()
   @Get('profile')
   getProfile(
     @CurrentUser() user: IUserWithoutPasswordAndUpdatedAt,

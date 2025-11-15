@@ -9,5 +9,6 @@ export const appCodeToStatusMap: Record<AppCodes, number> = {
   INTERNAL_ERROR: HttpStatus.INTERNAL_SERVER_ERROR,
   FORBIDDEN: HttpStatus.FORBIDDEN,
   USER_CREATED: HttpStatus.CREATED,
+  TASK_CREATED: HttpStatus.CREATED,
   BAD_REQUEST: HttpStatus.BAD_REQUEST,
 };
