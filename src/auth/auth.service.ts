@@ -2,7 +2,7 @@ import { AppCodes } from '@app/shared/app-codes.enum';
 import { AppResponse } from '@app/shared/app-response.dto';
 import { BcryptService } from '@app/shared/bcrypt/bcrypt.service';
 import { IAuthJWTPayload } from '@app/shared/interfaces/auth-jwt-payload.interface';
-import { IAuthUser } from '@app/shared/interfaces/auth-user.interface';
+import { IAuthProfileToken } from '@app/shared/interfaces/auth-user.interface';
 import {
   ILoginUser,
   INewUser,
@@ -24,7 +24,7 @@ export class AuthService {
     name,
     email,
     password,
-  }: INewUser): Promise<AppResponse<IAuthUser>> {
+  }: INewUser): Promise<AppResponse<IAuthProfileToken>> {
     const isExists = await this.userService.findByEmail(email);
     if (isExists) {
       return new AppResponse({ code: AppCodes.INVALID_EMAIL });
@@ -49,7 +49,7 @@ export class AuthService {
   async login({
     email,
     password,
-  }: ILoginUser): Promise<AppResponse<IAuthUser>> {
+  }: ILoginUser): Promise<AppResponse<IAuthProfileToken>> {
     const existingUser = await this.userService.findByEmail(email, {
       name: true,
       password: true,
@@ -77,14 +77,14 @@ export class AuthService {
     });
   }
 
-  private async generateJwt(user: IUser): Promise<IAuthUser> {
+  private async generateJwt(user: IUser): Promise<IAuthProfileToken> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, updatedAt: __, ...rest } = user;
     const jwtPayload: IAuthJWTPayload = { id: user.id, email: user.email };
     const jwtToken = await this.jwtService.signAsync(jwtPayload);
 
     return {
-      ...rest,
+      profile: { ...rest },
       jwtToken,
     };
   }

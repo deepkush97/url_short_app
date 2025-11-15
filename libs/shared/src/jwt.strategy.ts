@@ -4,6 +4,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UsersService } from 'src/user/user.service';
 import { IAuthJWTPayload } from './interfaces/auth-jwt-payload.interface';
+import { IUserWithoutPasswordAndUpdatedAt } from './interfaces/users.interface';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -18,13 +19,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: IAuthJWTPayload) {
+  async validate(
+    payload: IAuthJWTPayload,
+  ): Promise<IUserWithoutPasswordAndUpdatedAt> {
     const user = await this.userService.findOneById(payload.id);
     if (!user) {
       throw new UnauthorizedException();
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, updatedAt: __, ...rest } = user;
-    return rest;
+    return { ...rest };
   }
 }

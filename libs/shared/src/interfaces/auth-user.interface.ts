@@ -1,5 +1,9 @@
-import { IUser } from './users.interface';
+import { IUserWithoutPasswordAndUpdatedAt } from './users.interface';
 
-export interface IAuthUser extends Omit<IUser, 'updatedAt' | 'password'> {
+export interface IAuthProfile {
+  profile: IUserWithoutPasswordAndUpdatedAt;
+}
+
+export interface IAuthProfileToken extends IAuthProfile {
   jwtToken: string;
 }

@@ -1,12 +1,12 @@
 import { AppCodes } from '@app/shared/app-codes.enum';
 import { AppResponse } from '@app/shared/app-response.dto';
-import { IUser } from '@app/shared/interfaces/users.interface';
+import { IUserWithoutPasswordAndUpdatedAt } from '@app/shared/interfaces/users.interface';
 import { Auth, CurrentUser } from '@app/shared/jwt.guard';
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginRequest } from './requests/login.request';
 import { SignupRequest } from './requests/signup.request';
-import { AuthUserResponse } from './responses/auth-user.response';
+import { AuthProfile, AuthProfileToken } from './responses/auth-user.response';
 
 @Controller('auth')
 export class AuthController {
@@ -15,23 +15,27 @@ export class AuthController {
   @Post('signup')
   async handleSignup(
     @Body() body: SignupRequest,
-  ): Promise<AppResponse<AuthUserResponse>> {
+  ): Promise<AppResponse<AuthProfileToken>> {
     return this.authService.signup(body);
   }
 
   @Post('login')
   async handleLogin(
     @Body() body: LoginRequest,
-  ): Promise<AppResponse<AuthUserResponse>> {
+  ): Promise<AppResponse<AuthProfileToken>> {
     return this.authService.login(body);
   }
 
   @Auth()
   @Get('profile')
-  getProfile(@CurrentUser() user: IUser) {
+  getProfile(
+    @CurrentUser() user: IUserWithoutPasswordAndUpdatedAt,
+  ): AppResponse<AuthProfile> {
     return new AppResponse({
       code: AppCodes.OPERATION_SUCCESS,
-      data: user,
+      data: {
+        profile: user,
+      },
     });
   }
 }
