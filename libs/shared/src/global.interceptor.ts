@@ -19,7 +19,7 @@ export class GlobalInterceptor implements NestInterceptor {
     const request = ctx.getRequest<Request>();
     const response = ctx.getResponse<Response>();
 
-    const id = request.id || request.headers['x-request-id'] || uuid();
+    const id = request['requestId'] || request.headers['x-request-id'] || uuid();
 
     response.setHeader('x-request-id', id.toString());
 

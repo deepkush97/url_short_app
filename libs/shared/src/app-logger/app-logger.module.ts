@@ -5,6 +5,7 @@ import { LoggerModule } from 'nestjs-pino';
 import { v4 as uuidV4 } from 'uuid';
 
 import { AppLoggerService } from './app-logger.service';
+import { DatabaseLoggerService } from './db-logger.service';
 
 @Module({
   imports: [
@@ -25,11 +26,9 @@ import { AppLoggerService } from './app-logger.service';
               const id = uuidV4();
               res.setHeader('x-request-id', id);
               req.id = id;
+              req['requestId'] = id;
               return id;
             },
-            customProps: (req): object => ({
-              requestId: req.id,
-            }),
             autoLogging: false,
             quietReqLogger: true,
             transport: isProduction
@@ -39,14 +38,14 @@ import { AppLoggerService } from './app-logger.service';
                   options: {
                     colorize: true,
                     singleLine: true,
-                    messageFormat: '[{requestId}] [{context}] {msg}',
-                    ignore: 'pid,hostname,context,requestId,req,res',
+                    messageFormat: '[{reqId}] [{context}] {msg}',
+                    ignore: 'pid,hostname,context,requestId,req,res,reqId',
                     translateTime: 'HH:MM:ss.l',
                   },
                 },
             serializers: {
               req: (req): object => ({
-                requestId: req.id,
+                requestId: req.id ?? req['requestId'],
                 method: req.method,
                 url: req.url,
               }),
@@ -59,7 +58,7 @@ import { AppLoggerService } from './app-logger.service';
       },
     }),
   ],
-  providers: [AppLoggerService],
-  exports: [AppLoggerService],
+  providers: [AppLoggerService, DatabaseLoggerService],
+  exports: [AppLoggerService, DatabaseLoggerService],
 })
 export class AppLoggerModule {}
