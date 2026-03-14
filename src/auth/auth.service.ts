@@ -1,12 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
+import { SessionService } from '@app/session/session.service';
 import { AppCodes } from '@app/shared/app-codes.enum';
 import { AppResponse } from '@app/shared/app-response.dto';
 import { BcryptService } from '@app/shared/bcrypt/bcrypt.service';
 import { IAuthJWTPayload } from '@app/shared/interfaces/auth/auth-jwt-payload.interface';
 import { IAuthProfileToken } from '@app/shared/interfaces/auth/auth-user.interface';
-import { ILoginUser, INewUser, IUser } from '@app/shared/interfaces/user/users.interface';
+import {
+  ICurrentUser,
+  ILoginUser,
+  INewUser,
+  IUser,
+} from '@app/shared/interfaces/user/users.interface';
 
 import { UsersService } from '../user/user.service';
 
@@ -14,6 +20,7 @@ import { UsersService } from '../user/user.service';
 export class AuthService {
   constructor(
     private userService: UsersService,
+    private sessionService: SessionService,
     private bcryptService: BcryptService,
     private jwtService: JwtService,
   ) {}
@@ -32,7 +39,9 @@ export class AuthService {
       email,
     });
 
-    const data = await this.generateJwt(user);
+    const session = await this.sessionService.createNewSession(user);
+
+    const data = await this.generateProfilePayload(user, session.sessionId);
 
     return new AppResponse({
       code: AppCodes.USER_CREATED,
@@ -57,7 +66,11 @@ export class AuthService {
       return new AppResponse({ code: AppCodes.INVALID_CREDENTIALS });
     }
 
-    const data = await this.generateJwt(existingUser);
+    await this.sessionService.closeAllSession(existingUser.id);
+
+    const session = await this.sessionService.createNewSession(existingUser);
+
+    const data = await this.generateProfilePayload(existingUser, session.sessionId);
 
     return new AppResponse({
       code: AppCodes.OPERATION_SUCCESS,
@@ -65,13 +78,17 @@ export class AuthService {
     });
   }
 
-  private async generateJwt(user: IUser): Promise<IAuthProfileToken> {
+  async logout(user: ICurrentUser): Promise<boolean> {
+    return this.sessionService.closeSession(user.sessionId);
+  }
+
+  private async generateProfilePayload(user: IUser, sessionId: string): Promise<IAuthProfileToken> {
     const { password: _, updatedAt: __, ...rest } = user;
-    const jwtPayload: IAuthJWTPayload = { id: user.id, email: user.email };
+    const jwtPayload: IAuthJWTPayload = { sessionId };
     const jwtToken = await this.jwtService.signAsync(jwtPayload);
 
     return {
-      profile: { ...rest },
+      profile: { ...rest, sessionId },
       jwtToken,
     };
   }

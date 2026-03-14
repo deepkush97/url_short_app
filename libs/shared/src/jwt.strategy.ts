@@ -4,7 +4,7 @@ import { PassportStrategy } from '@nestjs/passport';
 
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
-import { UsersService } from '@app/user/user.service';
+import { SessionService } from '@app/session/session.service';
 
 import { IAuthJWTPayload } from './interfaces/auth/auth-jwt-payload.interface';
 import { ICurrentUser } from './interfaces/user/users.interface';
@@ -13,7 +13,7 @@ import { ICurrentUser } from './interfaces/user/users.interface';
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     readonly configService: ConfigService,
-    private readonly userService: UsersService,
+    private readonly sessionService: SessionService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -23,12 +23,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: IAuthJWTPayload): Promise<ICurrentUser> {
-    const user = await this.userService.findOneById(payload.id);
-    if (!user) {
+    const session = await this.sessionService.findSessionByGuid(payload.sessionId);
+    if (!session) {
       throw new UnauthorizedException();
     }
 
-    const { password: _, updatedAt: __, ...rest } = user;
-    return { ...rest };
+    return session;
   }
 }

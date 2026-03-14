@@ -32,6 +32,12 @@ Content-Type: {{contentType}}
   "password": "123456"
 }
 
+### LOGOUT - Logout user
+POST {{baseUrl}}/auth/logout
+Authorization: Bearer {{token}}
+Content-Type: {{contentType}}
+
+
 ### 👤 PROFILE — Get logged-in user's info
 # Requires Authorization header with Bearer token
 GET {{baseUrl}}/auth/profile

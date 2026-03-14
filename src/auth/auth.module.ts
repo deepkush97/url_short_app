@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 
+import { SessionModule } from '@app/session/session.module';
 import { BcryptModule } from '@app/shared/bcrypt/bcrypt.module';
 import { CacheModule } from '@app/shared/cache/cache.module';
 import { JwtStrategy } from '@app/shared/jwt.strategy';
@@ -14,6 +15,7 @@ import { AuthService } from './auth.service';
 @Module({
   imports: [
     UserModule,
+    SessionModule,
     BcryptModule,
     CacheModule,
     PassportModule,

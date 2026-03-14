@@ -15,6 +15,9 @@ export class AuthUserResponse implements ICurrentUser {
   email: string;
 
   @Expose()
+  sessionId: string;
+
+  @Expose()
   createdAt: Date;
 }
 

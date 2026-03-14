@@ -3,6 +3,7 @@ import {
   createParamDecorator,
   ExecutionContext,
   Injectable,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
@@ -16,5 +17,8 @@ export function Authenticated(): ReturnType<typeof applyDecorators> {
 
 export const CurrentUser = createParamDecorator((_: unknown, ctx: ExecutionContext) => {
   const request = ctx.switchToHttp().getRequest();
+  if (!request.user) {
+    throw new UnauthorizedException();
+  }
   return request.user;
 });
