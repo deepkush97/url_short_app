@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post } from '@nestjs/common';
 
 import { AppCodes } from '@app/shared/app-codes.enum';
 import { AppResponse } from '@app/shared/app-response.dto';
-import { IUserWithoutPasswordAndUpdatedAt } from '@app/shared/interfaces/users.interface';
+import { ICurrentUser } from '@app/shared/interfaces/user/users.interface';
 import { Authenticated, CurrentUser } from '@app/shared/jwt.guard';
 
 import { LoginRequest } from './requests/login.request';
@@ -27,7 +27,7 @@ export class AuthController {
 
   @Authenticated()
   @Get('profile')
-  getProfile(@CurrentUser() user: IUserWithoutPasswordAndUpdatedAt): AppResponse<AuthProfile> {
+  getProfile(@CurrentUser() user: ICurrentUser): AppResponse<AuthProfile> {
     return new AppResponse({
       code: AppCodes.OPERATION_SUCCESS,
       data: {

@@ -4,9 +4,9 @@ import { JwtService } from '@nestjs/jwt';
 import { AppCodes } from '@app/shared/app-codes.enum';
 import { AppResponse } from '@app/shared/app-response.dto';
 import { BcryptService } from '@app/shared/bcrypt/bcrypt.service';
-import { IAuthJWTPayload } from '@app/shared/interfaces/auth-jwt-payload.interface';
-import { IAuthProfileToken } from '@app/shared/interfaces/auth-user.interface';
-import { ILoginUser, INewUser, IUser } from '@app/shared/interfaces/users.interface';
+import { IAuthJWTPayload } from '@app/shared/interfaces/auth/auth-jwt-payload.interface';
+import { IAuthProfileToken } from '@app/shared/interfaces/auth/auth-user.interface';
+import { ILoginUser, INewUser, IUser } from '@app/shared/interfaces/user/users.interface';
 
 import { UsersService } from '../user/user.service';
 
@@ -66,7 +66,6 @@ export class AuthService {
   }
 
   private async generateJwt(user: IUser): Promise<IAuthProfileToken> {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, updatedAt: __, ...rest } = user;
     const jwtPayload: IAuthJWTPayload = { id: user.id, email: user.email };
     const jwtToken = await this.jwtService.signAsync(jwtPayload);

@@ -13,4 +13,4 @@ export interface IUser extends INewUser {
   updatedAt: Date;
 }
 
-export type IUserWithoutPasswordAndUpdatedAt = Omit<IUser, 'updatedAt' | 'password'>;
+export type ICurrentUser = Omit<IUser, 'updatedAt' | 'password'>;

@@ -1,7 +1,7 @@
-import { IUserWithoutPasswordAndUpdatedAt } from './users.interface';
+import { ICurrentUser } from '../user/users.interface';
 
 export interface IAuthProfile {
-  profile: IUserWithoutPasswordAndUpdatedAt;
+  profile: ICurrentUser;
 }
 
 export interface IAuthProfileToken extends IAuthProfile {

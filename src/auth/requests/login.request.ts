@@ -1,6 +1,6 @@
 import { IsEmail, IsNotEmpty, MaxLength, MinLength } from 'class-validator';
 
-import { ILoginUser } from '@app/shared/interfaces/users.interface';
+import { ILoginUser } from '@app/shared/interfaces/user/users.interface';
 
 export class LoginRequest implements ILoginUser {
   @IsEmail()

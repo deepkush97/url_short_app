@@ -1,10 +1,10 @@
 import { Exclude, Expose } from 'class-transformer';
 
-import { IAuthProfile, IAuthProfileToken } from '@app/shared/interfaces/auth-user.interface';
-import { IUserWithoutPasswordAndUpdatedAt } from '@app/shared/interfaces/users.interface';
+import { IAuthProfile, IAuthProfileToken } from '@app/shared/interfaces/auth/auth-user.interface';
+import { ICurrentUser } from '@app/shared/interfaces/user/users.interface';
 
 @Exclude()
-export class AuthUserResponse implements IUserWithoutPasswordAndUpdatedAt {
+export class AuthUserResponse implements ICurrentUser {
   @Expose()
   id: number;
 

@@ -1,3 +1,3 @@
-import { IUser } from './users.interface';
+import { IUser } from '../user/users.interface';
 
 export type IAuthJWTPayload = Pick<IUser, 'id' | 'email'>;

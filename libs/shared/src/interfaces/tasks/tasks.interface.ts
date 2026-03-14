@@ -1,3 +1,5 @@
+import { IBaseEntity } from '../base-entity.interface';
+
 export interface INewTask {
   title: string;
   description: string;
@@ -5,9 +7,4 @@ export interface INewTask {
   dueAt: Date;
 }
 
-export interface ITask extends INewTask {
-  userId: number;
-  id: number;
-  createdAt: Date;
-  updatedAt: Date;
-}
+export type ITask = IBaseEntity & INewTask;

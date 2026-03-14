@@ -5,8 +5,8 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UsersService } from 'src/user/user.service';
 
-import { IAuthJWTPayload } from './interfaces/auth-jwt-payload.interface';
-import { IUserWithoutPasswordAndUpdatedAt } from './interfaces/users.interface';
+import { IAuthJWTPayload } from './interfaces/auth/auth-jwt-payload.interface';
+import { ICurrentUser } from './interfaces/user/users.interface';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -21,7 +21,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: IAuthJWTPayload): Promise<IUserWithoutPasswordAndUpdatedAt> {
+  async validate(payload: IAuthJWTPayload): Promise<ICurrentUser> {
     const user = await this.userService.findOneById(payload.id);
     if (!user) {
       throw new UnauthorizedException();

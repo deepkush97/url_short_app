@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 
 import { AppCodes } from '@app/shared/app-codes.enum';
 import { AppResponse } from '@app/shared/app-response.dto';
-import { IUserWithoutPasswordAndUpdatedAt } from '@app/shared/interfaces/users.interface';
+import { ICurrentUser } from '@app/shared/interfaces/user/users.interface';
 import { Authenticated, CurrentUser } from '@app/shared/jwt.guard';
 
 import { CreateTaskRequest } from './requests/create-task.request';
@@ -17,7 +17,7 @@ export class TasksController {
 
   @Post('/')
   async createPost(
-    @CurrentUser() user: IUserWithoutPasswordAndUpdatedAt,
+    @CurrentUser() user: ICurrentUser,
     @Body() newPost: CreateTaskRequest,
   ): Promise<AppResponse<TaskResponse>> {
     return new AppResponse({
@@ -27,9 +27,7 @@ export class TasksController {
   }
 
   @Get('/')
-  async getAllPosts(
-    @CurrentUser() user: IUserWithoutPasswordAndUpdatedAt,
-  ): Promise<AppResponse<TaskResponse[]>> {
+  async getAllPosts(@CurrentUser() user: ICurrentUser): Promise<AppResponse<TaskResponse[]>> {
     return new AppResponse({
       code: AppCodes.OPERATION_SUCCESS,
       data: await this.tasksService.findAllByUserId(user.id),

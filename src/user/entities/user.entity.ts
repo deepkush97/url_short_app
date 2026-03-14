@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { IUser } from '@app/shared/interfaces/users.interface';
+import { IUser } from '@app/shared/interfaces/user/users.interface';
 
 @Entity('users')
 export class User implements IUser {
