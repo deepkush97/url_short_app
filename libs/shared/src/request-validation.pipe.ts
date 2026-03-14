@@ -1,10 +1,6 @@
-import {
-  BadRequestException,
-  Injectable,
-  Logger,
-  ValidationError,
-  ValidationPipe,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, ValidationError, ValidationPipe } from '@nestjs/common';
+
+import { AppLoggerService } from './app-logger/app-logger.service';
 
 import { AppCodes } from './app-codes.enum';
 import { AppResponse } from './app-response.dto';
@@ -13,9 +9,7 @@ import { validationErrorToValidationCodeMap } from './validation-error-to-code.m
 
 @Injectable()
 export class RequestValidationPipe extends ValidationPipe {
-  private readonly logger = new Logger('RequestValidationPipe');
-
-  constructor() {
+  constructor(private readonly logger: AppLoggerService) {
     super({
       whitelist: true,
       forbidNonWhitelisted: true,
@@ -24,12 +18,11 @@ export class RequestValidationPipe extends ValidationPipe {
         const formattedErrors = errors.reduce((acc, err) => {
           acc[err.property] = err.constraints
             ? Object.keys(err.constraints).map((constraint) => {
-                const constraintError =
-                  validationErrorToValidationCodeMap[constraint];
+                const constraintError = validationErrorToValidationCodeMap[constraint];
                 if (constraintError) {
                   return constraintError;
                 }
-                this.logger.log('unknown validation error', constraint);
+                this.logger.info('unknown validation error', constraint);
                 return ValidationErrorCode.UNKNOWN;
               })
             : [];

@@ -20,8 +20,19 @@ services:
     networks:
       - backend
 
+  redis:
+    container_name: redis
+    image: redis:6.2-alpine
+    restart: unless-stopped
+    volumes:
+      - redis_data:/redis_data
+    ports:
+      - 6379:6379
+    networks:
+      - backend
 volumes:
   mysql_data:
+  redis_data:
 
 networks:
   backend:

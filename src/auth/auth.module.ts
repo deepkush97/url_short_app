@@ -1,10 +1,14 @@
-import { BcryptModule } from '@app/shared/bcrypt/bcrypt.module';
-import { JwtStrategy } from '@app/shared/jwt.strategy';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+
 import { UserModule } from 'src/user/user.module';
+
+import { BcryptModule } from '@app/shared/bcrypt/bcrypt.module';
+import { CacheModule } from '@app/shared/cache/cache.module';
+import { JwtStrategy } from '@app/shared/jwt.strategy';
+
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 
@@ -12,16 +16,15 @@ import { AuthService } from './auth.service';
   imports: [
     UserModule,
     BcryptModule,
+    CacheModule,
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => {
+      useFactory: (configService: ConfigService) => {
         return {
           secret: configService.get('JWT_SECRET'),
           signOptions: {
-            expiresIn: parseInt(
-              configService.getOrThrow('JWT_EXPIRATION_TIME_IN_SECONDS'),
-            ),
+            expiresIn: parseInt(configService.getOrThrow('JWT_EXPIRATION_TIME_IN_SECONDS')),
           },
         };
       },

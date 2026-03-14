@@ -1,12 +1,20 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { AppController } from './app.controller';
+import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
+
+import { AppLoggerModule } from '@app/shared/app-logger/app-logger.module';
+import { GlobalInterceptor } from '@app/shared/global.interceptor';
+import { RequestValidationPipe } from '@app/shared/request-validation.pipe';
+
 import { AuthModule } from './auth/auth.module';
 import { DatabaseModule } from './database/database.module';
 import { TasksModule } from './tasks/tasks.module';
 
+import { AppController } from './app.controller';
+
 @Module({
   imports: [
+    AppLoggerModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -15,6 +23,15 @@ import { TasksModule } from './tasks/tasks.module';
     TasksModule,
   ],
   controllers: [AppController],
-  providers: [],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: GlobalInterceptor,
+    },
+    {
+      provide: APP_PIPE,
+      useClass: RequestValidationPipe,
+    },
+  ],
 })
 export class AppModule {}
