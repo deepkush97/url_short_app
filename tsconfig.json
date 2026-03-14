@@ -20,7 +20,8 @@
     "resolveJsonModule": true,
     "paths": {
       "@app/shared": ["libs/shared/src"],
-      "@app/shared/*": ["libs/shared/src/*"]
+      "@app/shared/*": ["libs/shared/src/*"],
+      "@app/*": ["src/*"]
     }
   },
   "exclude": ["node_modules", "dist", "test", "**/*.spec.ts"]

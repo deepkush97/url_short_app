@@ -1,4 +1,3 @@
-import { Task } from 'src/tasks/entities/task.entity';
 import {
   Column,
   CreateDateColumn,
@@ -9,6 +8,7 @@ import {
 } from 'typeorm';
 
 import { IUser } from '@app/shared/interfaces/user/users.interface';
+import { Task } from '@app/tasks/entities/task.entity';
 
 @Entity('users')
 export class User implements IUser {
