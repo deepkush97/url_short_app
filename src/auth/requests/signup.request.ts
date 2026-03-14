@@ -1,5 +1,6 @@
-import { INewUser } from '@app/shared/interfaces/users.interface';
 import { IsEmail, IsNotEmpty, MaxLength, MinLength } from 'class-validator';
+
+import { INewUser } from '@app/shared/interfaces/users.interface';
 
 export class SignupRequest implements INewUser {
   @IsNotEmpty()

@@ -1,5 +1,6 @@
-import { ITask } from '@app/shared/interfaces/tasks/tasks.interface';
 import { Exclude, Expose } from 'class-transformer';
+
+import { ITask } from '@app/shared/interfaces/tasks/tasks.interface';
 
 @Exclude()
 export class TaskResponse implements Omit<ITask, 'userId'> {

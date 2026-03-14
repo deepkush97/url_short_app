@@ -1,9 +1,7 @@
-import {
-  IAuthProfile,
-  IAuthProfileToken,
-} from '@app/shared/interfaces/auth-user.interface';
-import { IUserWithoutPasswordAndUpdatedAt } from '@app/shared/interfaces/users.interface';
 import { Exclude, Expose } from 'class-transformer';
+
+import { IAuthProfile, IAuthProfileToken } from '@app/shared/interfaces/auth-user.interface';
+import { IUserWithoutPasswordAndUpdatedAt } from '@app/shared/interfaces/users.interface';
 
 @Exclude()
 export class AuthUserResponse implements IUserWithoutPasswordAndUpdatedAt {

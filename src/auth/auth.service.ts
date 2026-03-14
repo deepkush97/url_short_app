@@ -1,15 +1,13 @@
+import { Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+
 import { AppCodes } from '@app/shared/app-codes.enum';
 import { AppResponse } from '@app/shared/app-response.dto';
 import { BcryptService } from '@app/shared/bcrypt/bcrypt.service';
 import { IAuthJWTPayload } from '@app/shared/interfaces/auth-jwt-payload.interface';
 import { IAuthProfileToken } from '@app/shared/interfaces/auth-user.interface';
-import {
-  ILoginUser,
-  INewUser,
-  IUser,
-} from '@app/shared/interfaces/users.interface';
-import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { ILoginUser, INewUser, IUser } from '@app/shared/interfaces/users.interface';
+
 import { UsersService } from '../user/user.service';
 
 @Injectable()
@@ -20,11 +18,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signup({
-    name,
-    email,
-    password,
-  }: INewUser): Promise<AppResponse<IAuthProfileToken>> {
+  async signup({ name, email, password }: INewUser): Promise<AppResponse<IAuthProfileToken>> {
     const isExists = await this.userService.findByEmail(email);
     if (isExists) {
       return new AppResponse({ code: AppCodes.INVALID_EMAIL });
@@ -46,10 +40,7 @@ export class AuthService {
     });
   }
 
-  async login({
-    email,
-    password,
-  }: ILoginUser): Promise<AppResponse<IAuthProfileToken>> {
+  async login({ email, password }: ILoginUser): Promise<AppResponse<IAuthProfileToken>> {
     const existingUser = await this.userService.findByEmail(email, {
       name: true,
       password: true,
@@ -61,10 +52,7 @@ export class AuthService {
       return new AppResponse({ code: AppCodes.BAD_REQUEST });
     }
 
-    const isValidPassword = await this.bcryptService.validate(
-      password,
-      existingUser.password,
-    );
+    const isValidPassword = await this.bcryptService.validate(password, existingUser.password);
     if (!isValidPassword) {
       return new AppResponse({ code: AppCodes.INVALID_CREDENTIALS });
     }

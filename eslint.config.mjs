@@ -1,8 +1,8 @@
 import { FlatCompat } from '@eslint/eslintrc';
 import prettierPlugin from 'eslint-plugin-prettier';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
+import { defineConfig } from 'eslint/config';
 import path from 'path';
-import tseslint from 'typescript-eslint';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -12,9 +12,9 @@ const compat = new FlatCompat({
   baseDirectory: __dirname,
 });
 
-export default tseslint.config(
+export default defineConfig(
   {
-    ignores: ['dist/**', 'node_modules/**', 'eslint.config.js'],
+    ignores: ['dist/**', 'node_modules/**', 'eslint.config.mjs'],
   },
   ...compat.extends('plugin:@typescript-eslint/recommended', 'plugin:prettier/recommended'),
   {

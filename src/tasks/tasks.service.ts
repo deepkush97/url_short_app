@@ -1,7 +1,10 @@
-import { INewTask, ITask } from '@app/shared/interfaces/tasks/tasks.interface';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+
 import { Repository } from 'typeorm';
+
+import { INewTask, ITask } from '@app/shared/interfaces/tasks/tasks.interface';
+
 import { Task } from './entities/task.entity';
 
 @Injectable()

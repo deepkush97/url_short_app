@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+
 import { FindOptionsSelect, Repository } from 'typeorm';
+
 import { User } from './entities/user.entity';
 
 @Injectable()
@@ -23,10 +25,7 @@ export class UsersService {
     return this.userRepository.findOne({ where: { id } });
   }
 
-  async findByEmail(
-    email: string,
-    select?: FindOptionsSelect<User>,
-  ): Promise<User | null> {
+  async findByEmail(email: string, select?: FindOptionsSelect<User>): Promise<User | null> {
     return this.userRepository.findOne({ where: { email }, select });
   }
 

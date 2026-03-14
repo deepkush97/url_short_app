@@ -1,5 +1,6 @@
-import { INewTask } from '@app/shared/interfaces/tasks/tasks.interface';
 import { IsDateString, IsNotEmpty, MaxLength } from 'class-validator';
+
+import { INewTask } from '@app/shared/interfaces/tasks/tasks.interface';
 
 export class CreateTaskRequest implements INewTask {
   @IsNotEmpty()
