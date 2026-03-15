@@ -21,11 +21,11 @@ export class SessionService {
   ) {}
 
   async createNewSession(user: IUser): Promise<ICurrentUser> {
-    const task = this.sessionRepository.create({
+    const newSession = this.sessionRepository.create({
       userId: user.id,
       status: AuthSessionEnum.OPEN,
     });
-    const session = await this.sessionRepository.save(task);
+    const session = await this.sessionRepository.save(newSession);
 
     return this.prepareSessionPayload(session, user);
   }

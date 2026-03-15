@@ -7,8 +7,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { Session } from '@app/session/entities/session.entity';
 import { IUser } from '@app/shared/interfaces/user/users.interface';
-import { Task } from '@app/tasks/entities/task.entity';
 
 @Entity('users')
 export class User implements IUser {
@@ -30,6 +30,6 @@ export class User implements IUser {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(() => Task, (task) => task.user)
-  tasks: Task[];
+  @OneToMany(() => Session, (session) => session.user)
+  sessions: Session[];
 }

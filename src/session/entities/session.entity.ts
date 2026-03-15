@@ -31,7 +31,7 @@ export class Session implements ISession {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => User, (user) => user.tasks)
+  @ManyToOne(() => User, (user) => user.sessions)
   @JoinColumn({ name: 'userId' })
   user: User;
 

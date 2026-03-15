@@ -11,9 +11,4 @@ export class AppController {
       code: AppCodes.OPERATION_SUCCESS,
     });
   }
-
-  @Get('')
-  getHello2(): string {
-    return 'hello';
-  }
 }

@@ -50,29 +50,3 @@ Authorization: Bearer invalid_token
 Content-Type: {{contentType}}
 
 
-### 👤 create a new task
-# Requires Authorization header with Bearer token
-POST {{baseUrl}}/tasks
-Authorization: Bearer {{token}}
-Content-Type: {{contentType}}
-
-{
-  "title": "third task",
-  "description": "careful",
-  "hexColor":"#888888",
-  "dueAt":"2025-11-15T14:34:08.700Z"
-}
-
-### 👤 get all tasks
-# Requires Authorization header with Bearer token
-GET {{baseUrl}}/tasks
-Authorization: Bearer {{token}}
-Content-Type: {{contentType}}
-
-
-
-### 👤 delete task by id
-# Requires Authorization header with Bearer token
-DELETE  {{baseUrl}}/tasks/3
-Authorization: Bearer {{token}}
-Content-Type: {{contentType}}
