@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { Logger as TypeOrmLogger } from 'typeorm';
 
 import { AppLoggerService } from './app-logger.service';
+
 function stringifyParams(parameters: string[]): string {
   try {
     return JSON.stringify(parameters);
@@ -10,6 +11,7 @@ function stringifyParams(parameters: string[]): string {
     return parameters?.join(', ');
   }
 }
+
 @Injectable()
 export class DatabaseLoggerService implements TypeOrmLogger {
   constructor(private readonly logger: AppLoggerService) {}

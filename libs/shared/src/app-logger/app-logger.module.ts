@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { LoggerModule } from 'nestjs-pino';
@@ -7,6 +7,7 @@ import { v4 as uuidV4 } from 'uuid';
 import { AppLoggerService } from './app-logger.service';
 import { DatabaseLoggerService } from './db-logger.service';
 
+@Global()
 @Module({
   imports: [
     LoggerModule.forRootAsync({

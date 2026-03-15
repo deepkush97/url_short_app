@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 
-import { AppLoggerModule } from '../app-logger/app-logger.module';
+import { RedisModule } from '../redis/redis.module';
 
 import { CacheService } from './cache.service';
 
 @Module({
-  imports: [ConfigModule, AppLoggerModule],
+  imports: [RedisModule],
   providers: [CacheService],
   exports: [CacheService],
 })

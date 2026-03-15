@@ -2,15 +2,13 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AppLoggerModule } from '@app/shared/app-logger/app-logger.module';
 import { DatabaseLoggerService } from '@app/shared/app-logger/db-logger.service';
 
 @Module({
   imports: [
     ConfigModule,
-    AppLoggerModule,
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule, AppLoggerModule],
+      imports: [ConfigModule],
       inject: [ConfigService, DatabaseLoggerService],
       useFactory: (configService: ConfigService, logger: DatabaseLoggerService) => ({
         type: 'mysql',
