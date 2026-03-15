@@ -1,14 +1,16 @@
 ### 🌍 Base Environment Variables
 @baseUrl = http://localhost:3000
 @contentType = application/json
-@token = {{login.response.body.data.jwtToken}}   # Auto-injected from login response
+@token = {{signup.response.body.data.jwtToken}} 
+@token = {{login.response.body.data.jwtToken}} 
+
+@code = {{createCode.response.body.data}}  
 
 # ───────────────────────────────────────────────
 # 🧾 AUTH MODULE ENDPOINTS
 # ───────────────────────────────────────────────
 
-### 🧩 SIGNUP — Register a new user
-# Creates a new user with email + password
+# @name signup
 POST {{baseUrl}}/auth/signup
 Content-Type: {{contentType}}
 
@@ -18,11 +20,6 @@ Content-Type: {{contentType}}
   "password": "123456"
 }
 
-### 🔑 LOGIN — Authenticate user and receive JWT
-# Returns access_token used for authenticated requests
-# Save response automatically in variable "login"
-# (VSCode REST Client: click “Send Request”)
-# (JetBrains: just run, token is reused from env)
 # @name login
 POST {{baseUrl}}/auth/login
 Content-Type: {{contentType}}
@@ -50,19 +47,19 @@ Authorization: Bearer invalid_token
 Content-Type: {{contentType}}
 
 
-### 👤 create a new short code
-# Requires Authorization header with Bearer token
+
+# @name createCode
 POST {{baseUrl}}/u
 Authorization: Bearer {{token}}
 Content-Type: {{contentType}}
 
 {
-  "url": "http://www.google.com",
-  "description": "Google"
+  "url": "http://www.facebook.com",
+  "description": "Facebook"
 }
 
-### 👤 get url
-GET {{baseUrl}}/u/:code
+# @name getCode
+GET {{baseUrl}}/u/{{code}}
 Content-Type: {{contentType}}
 
 

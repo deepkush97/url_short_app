@@ -35,11 +35,9 @@ export class UrlController {
   @Get('/:code')
   async handleShortCode(@Param('code') code: string, @Res() response: Response): Promise<void> {
     const fullUrl = await this.urlService.getUrlByCode(code);
-    if (fullUrl) {
-      this.logger.warn('Url not found by code', code);
+    if (!fullUrl) {
       throw new NotFoundException();
     }
-    this.logger.info('Url found by code', code, fullUrl);
     return response.redirect(fullUrl);
   }
 }

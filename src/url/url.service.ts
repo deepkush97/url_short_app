@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
+import { AppLoggerService } from '@app/shared/app-logger/app-logger.service';
 import { Base62Service } from '@app/shared/base62/base62.service';
 import { CacheService } from '@app/shared/cache/cache.service';
 import { INewUrl, IUrl } from '@app/shared/interfaces/url/url.interface';
@@ -18,6 +19,7 @@ export class UrlService {
     private readonly cacheService: CacheService,
     private readonly rangeAllocatorService: RangeAllocatorService,
     private readonly base62Service: Base62Service,
+    private readonly logger: AppLoggerService,
   ) {}
 
   async createUrl(input: INewUrl, userId: number): Promise<Url> {
@@ -33,15 +35,16 @@ export class UrlService {
     const url = this.urlRepository.create(newUrl);
     const urlData = await this.urlRepository.save(url);
 
-    await this.cacheService.set(code, input.url);
+    await this.cacheService.set(code, { url: input.url });
 
     return urlData;
   }
 
   async getUrlByCode(code: string): Promise<string | null> {
-    const url = await this.cacheService.get<string>(code);
-    if (url) {
-      return url;
+    const urlData = await this.cacheService.get<{ url: string }>(code);
+
+    if (urlData) {
+      return urlData.url;
     }
 
     const existingUrl = await this.urlRepository.findOne({ where: { code } });
@@ -49,7 +52,7 @@ export class UrlService {
       return null;
     }
 
-    await this.cacheService.set(code, existingUrl.url);
+    await this.cacheService.set(code, { url: existingUrl.url });
 
     return existingUrl.url;
   }

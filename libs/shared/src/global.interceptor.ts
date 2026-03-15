@@ -1,4 +1,10 @@
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
+import {
+  CallHandler,
+  ExecutionContext,
+  HttpStatus,
+  Injectable,
+  NestInterceptor,
+} from '@nestjs/common';
 
 import { Request, Response } from 'express';
 import { map, Observable, tap } from 'rxjs';
@@ -28,7 +34,7 @@ export class GlobalInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       map((res) => {
-        if (!(res instanceof AppResponse)) {
+        if (!(res instanceof AppResponse) && response.statusCode !== HttpStatus.FOUND) {
           this.logger.error(`[${id}] received is not an instance of AppResponse`);
         }
         const code = res?.code || AppCodes.INTERNAL_ERROR;

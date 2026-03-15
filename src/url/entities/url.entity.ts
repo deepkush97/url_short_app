@@ -19,7 +19,7 @@ export class Url implements IUrl {
   @Column({ length: 1000 })
   url: string;
 
-  @Column({ length: 7 })
+  @Column({ length: 8 })
   code: string;
 
   @Column({ type: 'text' })

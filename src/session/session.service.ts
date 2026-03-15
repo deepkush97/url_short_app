@@ -65,7 +65,10 @@ export class SessionService {
   }
 
   async closeSession(guid: string): Promise<boolean> {
-    await this.sessionRepository.update({ guid }, { status: AuthSessionEnum.CLOSED });
+    await Promise.all([
+      this.sessionRepository.update({ guid }, { status: AuthSessionEnum.CLOSED }),
+      this.cacheService.del(guid),
+    ]);
     return true;
   }
 }
