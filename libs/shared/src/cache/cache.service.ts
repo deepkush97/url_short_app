@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
 
 import { AppLoggerService } from '../app-logger/app-logger.service';
+import { RedisService } from '../redis/redis.service';
 
 @Injectable()
 export class CacheService implements OnModuleInit, OnModuleDestroy {
@@ -11,7 +12,10 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
   constructor(
     private readonly configService: ConfigService,
     private readonly logger: AppLoggerService,
-  ) {}
+    private readonly redisService: RedisService,
+  ) {
+    this.redisClient = this.redisService.getClient();
+  }
 
   onModuleInit(): void {
     const host = this.configService.get<string>('REDIS_HOST', 'localhost');
