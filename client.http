@@ -50,3 +50,19 @@ Authorization: Bearer invalid_token
 Content-Type: {{contentType}}
 
 
+### 👤 create a new short code
+# Requires Authorization header with Bearer token
+POST {{baseUrl}}/u
+Authorization: Bearer {{token}}
+Content-Type: {{contentType}}
+
+{
+  "url": "http://www.google.com",
+  "description": "Google"
+}
+
+### 👤 get url
+GET {{baseUrl}}/u/:code
+Content-Type: {{contentType}}
+
+

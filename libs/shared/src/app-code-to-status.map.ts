@@ -11,4 +11,6 @@ export const appCodeToStatusMap: Record<AppCodes, number> = {
   FORBIDDEN: HttpStatus.FORBIDDEN,
   USER_CREATED: HttpStatus.CREATED,
   BAD_REQUEST: HttpStatus.BAD_REQUEST,
+  URL_CREATED: HttpStatus.CREATED,
+  URL_NOT_FOUND: HttpStatus.NOT_FOUND,
 };

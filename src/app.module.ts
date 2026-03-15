@@ -8,6 +8,7 @@ import { RequestValidationPipe } from '@app/shared/request-validation.pipe';
 
 import { AuthModule } from './auth/auth.module';
 import { DatabaseModule } from './database/database.module';
+import { UrlModule } from './url/url.module';
 
 import { AppController } from './app.controller';
 
@@ -19,6 +20,7 @@ import { AppController } from './app.controller';
     }),
     DatabaseModule,
     AuthModule,
+    UrlModule,
   ],
   controllers: [AppController],
   providers: [

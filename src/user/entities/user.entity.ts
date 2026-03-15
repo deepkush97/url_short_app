@@ -9,6 +9,7 @@ import {
 
 import { Session } from '@app/session/entities/session.entity';
 import { IUser } from '@app/shared/interfaces/user/users.interface';
+import { Url } from '@app/url/entities/url.entity';
 
 @Entity('users')
 export class User implements IUser {
@@ -32,4 +33,7 @@ export class User implements IUser {
 
   @OneToMany(() => Session, (session) => session.user)
   sessions: Session[];
+
+  @OneToMany(() => Url, (url) => url.user)
+  urls: Url[];
 }
