@@ -22,7 +22,7 @@ export class RequestValidationPipe extends ValidationPipe {
                 if (constraintError) {
                   return constraintError;
                 }
-                this.logger.info('unknown validation error', constraint);
+                this.logger.warn(`unknown validation error: ${constraint}`);
                 return ValidationErrorCode.UNKNOWN;
               })
             : [];

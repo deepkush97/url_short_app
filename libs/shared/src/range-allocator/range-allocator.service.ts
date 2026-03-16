@@ -24,25 +24,31 @@ export class RangeAllocatorService {
     if (this.currentId >= this.maxId) {
       await this.getNewRange();
     }
-    this.logger.info('Current Id', this.currentId);
+    this.logger.info(`Current Id: ${this.currentId}`);
     const id = this.currentId++;
-    this.logger.info('Id', id);
+    this.logger.info(`Id: ${id}`);
     return id;
   }
 
   private async getNewRange(): Promise<void> {
-    this.logger.info('Creating new range, currentId, maxId', this.currentId, this.maxId);
+    this.logger.info('Creating new range', {
+      data: {
+        currentId: this.currentId,
+        maxId: this.maxId,
+      },
+    });
     try {
       const newRange = await this.redis.incrby(this.INCREMENT_KEY, this.WINDOW_RANGE);
       this.currentId = newRange - this.WINDOW_RANGE;
       this.maxId = newRange;
     } catch (error) {
-      this.logger.error(
-        'Failed to allocate new range, currentId, maxId',
-        this.currentId,
-        this.maxId,
+      this.logger.error('Failed to allocate new range', {
+        data: {
+          currentId: this.currentId,
+          maxId: this.maxId,
+        },
         error,
-      );
+      });
     }
   }
 }

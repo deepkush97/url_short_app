@@ -34,13 +34,13 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
   }
 
   async get<T>(key: string): Promise<T | null> {
-    this.logger.info(`get: key ${key} `);
+    this.logger.info(`get: key ${key}`);
     const value = await this.redisClient.get(key);
     if (!value) {
-      this.logger.info(`get: cache missed ${key} `);
+      this.logger.info(`get: cache missed ${key}`);
       return null;
     }
-    this.logger.info(`get: cache success ${key} `);
+    this.logger.info(`get: cache success ${key}`);
     return JSON.parse(value) as T;
   }
 
@@ -48,7 +48,7 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
     this.logger.info(`set: key ${key} ttl ${ttl}`);
 
     if (ttl) {
-      this.logger.info(` set: cache set ${key} with ttl ${ttl}`);
+      this.logger.info(`set: cache set ${key} with ttl ${ttl}`);
       await this.redisClient.set(key, JSON.stringify(value), 'EX', ttl);
     } else {
       this.logger.info(`set: cache set ${key}`);
@@ -63,7 +63,7 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
   }
 
   async delAll(pattern: string, batchSize = 1): Promise<void> {
-    this.logger.info(` delAll: pattern ${pattern} batchSize ${batchSize}`);
+    this.logger.info(`delAll: pattern ${pattern} batchSize ${batchSize}`);
 
     const stream = this.redisClient.scanStream({
       match: pattern,
@@ -75,16 +75,16 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
     const count = 0;
 
     stream.on('data', (resultKeys) => {
-      this.logger.info(` delAll: keys found ${resultKeys.length} count ${count}`);
+      this.logger.info(`delAll: keys found ${resultKeys.length} count ${count}`);
       for (const resultKey of resultKeys) {
         localKeys.push(resultKey);
         pipeline.del(resultKey);
       }
 
       if (localKeys.length > batchSize) {
-        void pipeline.exec((err, result) => {
-          if (err) this.logger.error('error in executing pipeline', err);
-          if (result) this.logger.info('batch completed', result);
+        void pipeline.exec((error, result) => {
+          if (error) this.logger.error('error in executing pipeline', { error });
+          if (result) this.logger.info('batch completed', { data: result });
         });
         localKeys = [];
         pipeline = this.redisClient.pipeline();
@@ -92,14 +92,14 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
     });
 
     stream.on('end', () => {
-      void pipeline.exec((err, result) => {
-        if (err) this.logger.error('error in executing pipeline', err);
-        if (result) this.logger.info('batch completed', result);
+      void pipeline.exec((error, result) => {
+        if (error) this.logger.error('error in executing pipeline', { error });
+        if (result) this.logger.info('batch completed', { data: result });
       });
     });
 
-    stream.on('error', (err) => {
-      if (err) this.logger.error('error in executing pipeline', err);
+    stream.on('error', (error) => {
+      if (error) this.logger.error('error in executing pipeline', { error });
     });
   }
 }
