@@ -9,6 +9,7 @@ import { ICurrentUser } from '@app/shared/interfaces/user/users.interface';
 import { Authenticated, CurrentUser } from '@app/shared/jwt.guard';
 
 import { CreateUrlRequest } from './requests/create-url.request';
+import { GetUrlParamDto } from './requests/get-url.request';
 
 import { UrlService } from './url.service';
 
@@ -32,9 +33,9 @@ export class UrlController {
     });
   }
 
-  @Get('/:code')
-  async handleShortCode(@Param('code') code: string, @Res() response: Response): Promise<void> {
-    const fullUrl = await this.urlService.getUrlByCode(code);
+  @Get(':code')
+  async handleShortCode(@Param() params: GetUrlParamDto, @Res() response: Response): Promise<void> {
+    const fullUrl = await this.urlService.getUrlByCode(params.code);
     if (!fullUrl) {
       throw new NotFoundException();
     }

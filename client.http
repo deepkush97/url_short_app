@@ -10,6 +10,7 @@
 # 🧾 AUTH MODULE ENDPOINTS
 # ───────────────────────────────────────────────
 
+### SIGNUP - Signup user
 # @name signup
 POST {{baseUrl}}/auth/signup
 Content-Type: {{contentType}}
@@ -20,6 +21,7 @@ Content-Type: {{contentType}}
   "password": "123456"
 }
 
+### LOGIN - Login user
 # @name login
 POST {{baseUrl}}/auth/login
 Content-Type: {{contentType}}
@@ -30,13 +32,14 @@ Content-Type: {{contentType}}
 }
 
 ### LOGOUT - Logout user
+# @name logout
 POST {{baseUrl}}/auth/logout
 Authorization: Bearer {{token}}
 Content-Type: {{contentType}}
 
 
 ### 👤 PROFILE — Get logged-in user's info
-# Requires Authorization header with Bearer token
+# @name profile
 GET {{baseUrl}}/auth/profile
 Authorization: Bearer {{token}}
 Content-Type: {{contentType}}
@@ -47,7 +50,7 @@ Authorization: Bearer invalid_token
 Content-Type: {{contentType}}
 
 
-
+### CREATE CODE - create a new shorter url 
 # @name createCode
 POST {{baseUrl}}/u
 Authorization: Bearer {{token}}
@@ -58,6 +61,7 @@ Content-Type: {{contentType}}
   "description": "Facebook"
 }
 
+### GET CODE - Redirect to original url
 # @name getCode
 GET {{baseUrl}}/u/{{code}}
 Content-Type: {{contentType}}
