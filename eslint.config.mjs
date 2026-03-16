@@ -1,5 +1,4 @@
 import { FlatCompat } from '@eslint/eslintrc';
-import prettierPlugin from 'eslint-plugin-prettier';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import { defineConfig } from 'eslint/config';
 import path from 'path';
@@ -16,10 +15,9 @@ export default defineConfig(
   {
     ignores: ['dist/**', 'node_modules/**', 'eslint.config.mjs'],
   },
-  ...compat.extends('plugin:@typescript-eslint/recommended', 'plugin:prettier/recommended'),
+  ...compat.extends('plugin:@typescript-eslint/recommended'),
   {
     plugins: {
-      prettier: prettierPlugin,
       'simple-import-sort': simpleImportSort,
     },
     languageOptions: {
