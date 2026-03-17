@@ -41,12 +41,6 @@ export class UrlService {
   }
 
   async getUrlByCode(code: string): Promise<string | null> {
-    const urlData = await this.cacheService.get<{ url: string }>(code);
-
-    if (urlData) {
-      return urlData.url;
-    }
-
     const existingUrl = await this.urlRepository.findOne({ where: { code } });
     if (!existingUrl) {
       return null;

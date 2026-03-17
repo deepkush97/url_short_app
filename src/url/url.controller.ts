@@ -1,4 +1,13 @@
-import { Body, Controller, Get, NotFoundException, Param, Post, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  Post,
+  Res,
+  UseInterceptors,
+} from '@nestjs/common';
 
 import { Response } from 'express';
 
@@ -8,6 +17,7 @@ import { AppResponse } from '@app/shared/app-response.dto';
 import { ICurrentUser } from '@app/shared/interfaces/user/users.interface';
 import { Authenticated, CurrentUser } from '@app/shared/jwt.guard';
 
+import { CacheRedirectInterceptor } from './interceptors/url-cache-redirect.interceptor';
 import { CreateUrlRequest } from './requests/create-url.request';
 import { GetUrlParamDto } from './requests/get-url.request';
 
@@ -34,6 +44,7 @@ export class UrlController {
   }
 
   @Get(':code')
+  @UseInterceptors(CacheRedirectInterceptor)
   async handleShortCode(@Param() params: GetUrlParamDto, @Res() response: Response): Promise<void> {
     const fullUrl = await this.urlService.getUrlByCode(params.code);
     if (!fullUrl) {
