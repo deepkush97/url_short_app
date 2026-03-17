@@ -1,25 +1,19 @@
-import { Inject, Injectable, Scope } from '@nestjs/common';
-import { INQUIRER } from '@nestjs/core';
+import { Injectable, Scope } from '@nestjs/common';
 
 import { PinoLogger } from 'nestjs-pino';
 import { Level } from 'pino';
 
 type AppLogPayload = {
+  context: string;
   data?: unknown;
   error?: Error | unknown;
 };
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class AppLoggerService {
-  constructor(
-    private readonly logger: PinoLogger,
-    @Inject(INQUIRER) private parent: object,
-  ) {
-    const context = parent?.constructor?.name || 'App';
-    this.logger.setContext(context);
-  }
+  constructor(private readonly logger: PinoLogger) {}
 
-  private log(type: Level, msg: string, payload?: AppLogPayload): void {
+  private log(type: Level, msg: string, payload: AppLogPayload): void {
     if (!payload) {
       this.logger[type](msg);
     }

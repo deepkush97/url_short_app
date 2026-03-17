@@ -36,6 +36,7 @@ export class RangeAllocatorService {
         currentId: this.currentId,
         maxId: this.maxId,
       },
+      context: RangeAllocatorService.name,
     });
     try {
       const newRange = await this.redis.incrby(this.INCREMENT_KEY, this.WINDOW_RANGE);
@@ -48,6 +49,7 @@ export class RangeAllocatorService {
           maxId: this.maxId,
         },
         error,
+        context: RangeAllocatorService.name,
       });
     }
   }

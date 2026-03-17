@@ -26,7 +26,7 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
       port,
     });
 
-    this.logger.info(`Connected to Redis at ${host}:${port}`);
+    this.logger.info(`Connected to Redis at ${host}:${port}`, { context: CacheService.name });
   }
 
   onModuleDestroy(): void {
@@ -34,36 +34,38 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
   }
 
   async get<T>(key: string): Promise<T | null> {
-    this.logger.info(`get: key ${key}`);
+    this.logger.info(`get: key ${key}`, { context: CacheService.name });
     const value = await this.redisClient.get(key);
     if (!value) {
-      this.logger.info(`get: cache missed ${key}`);
+      this.logger.info(`get: cache missed ${key}`, { context: CacheService.name });
       return null;
     }
-    this.logger.info(`get: cache success ${key}`);
+    this.logger.info(`get: cache success ${key}`, { context: CacheService.name });
     return JSON.parse(value) as T;
   }
 
   async set(key: string, value: unknown, ttl?: number): Promise<void> {
-    this.logger.info(`set: key ${key} ttl ${ttl}`);
+    this.logger.info(`set: key ${key} ttl ${ttl}`, { context: CacheService.name });
 
     if (ttl) {
-      this.logger.info(`set: cache set ${key} with ttl ${ttl}`);
+      this.logger.info(`set: cache set ${key} with ttl ${ttl}`, { context: CacheService.name });
       await this.redisClient.set(key, JSON.stringify(value), 'EX', ttl);
     } else {
-      this.logger.info(`set: cache set ${key}`);
+      this.logger.info(`set: cache set ${key}`, { context: CacheService.name });
       await this.redisClient.set(key, JSON.stringify(value));
     }
   }
 
   async del(key: string): Promise<void> {
-    this.logger.info(`del: key ${key}`);
+    this.logger.info(`del: key ${key}`, { context: CacheService.name });
 
     await this.redisClient.del(key);
   }
 
   async delAll(pattern: string, batchSize = 1): Promise<void> {
-    this.logger.info(`delAll: pattern ${pattern} batchSize ${batchSize}`);
+    this.logger.info(`delAll: pattern ${pattern} batchSize ${batchSize}`, {
+      context: CacheService.name,
+    });
 
     const stream = this.redisClient.scanStream({
       match: pattern,
@@ -75,7 +77,9 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
     const count = 0;
 
     stream.on('data', (resultKeys) => {
-      this.logger.info(`delAll: keys found ${resultKeys.length} count ${count}`);
+      this.logger.info(`delAll: keys found ${resultKeys.length} count ${count}`, {
+        context: CacheService.name,
+      });
       for (const resultKey of resultKeys) {
         localKeys.push(resultKey);
         pipeline.del(resultKey);
@@ -83,8 +87,10 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
 
       if (localKeys.length > batchSize) {
         void pipeline.exec((error, result) => {
-          if (error) this.logger.error('error in executing pipeline', { error });
-          if (result) this.logger.info('batch completed', { data: result });
+          if (error)
+            this.logger.error('error in executing pipeline', { error, context: CacheService.name });
+          if (result)
+            this.logger.info('batch completed', { data: result, context: CacheService.name });
         });
         localKeys = [];
         pipeline = this.redisClient.pipeline();
@@ -93,13 +99,16 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
 
     stream.on('end', () => {
       void pipeline.exec((error, result) => {
-        if (error) this.logger.error('error in executing pipeline', { error });
-        if (result) this.logger.info('batch completed', { data: result });
+        if (error)
+          this.logger.error('error in executing pipeline', { error, context: CacheService.name });
+        if (result)
+          this.logger.info('batch completed', { data: result, context: CacheService.name });
       });
     });
 
     stream.on('error', (error) => {
-      if (error) this.logger.error('error in executing pipeline', { error });
+      if (error)
+        this.logger.error('error in executing pipeline', { error, context: CacheService.name });
     });
   }
 }

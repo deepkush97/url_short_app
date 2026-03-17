@@ -39,6 +39,7 @@ export class UrlController {
     if (!fullUrl) {
       throw new NotFoundException();
     }
+
     return response.redirect(fullUrl);
   }
 }

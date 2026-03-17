@@ -35,7 +35,9 @@ export class GlobalInterceptor implements NestInterceptor {
     return next.handle().pipe(
       map((res) => {
         if (!(res instanceof AppResponse) && response.statusCode !== HttpStatus.FOUND) {
-          this.logger.warn(`received response is not an instance of AppResponse`);
+          this.logger.warn(`received response is not an instance of AppResponse`, {
+            context: GlobalInterceptor.name,
+          });
         }
         const code = res?.code || AppCodes.INTERNAL_ERROR;
         const status = appCodeToStatusMap[code] ?? 500;
@@ -51,7 +53,9 @@ export class GlobalInterceptor implements NestInterceptor {
         const duration = Date.now() - start;
         const status = response.statusCode;
 
-        this.logger.info(`${method} ${originalUrl} -> ${status} (${duration}ms)`);
+        this.logger.info(`${method} ${originalUrl} -> ${status} (${duration}ms)`, {
+          context: GlobalInterceptor.name,
+        });
       }),
     );
   }
