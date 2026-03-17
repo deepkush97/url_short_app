@@ -4,6 +4,8 @@ import { DocumentBuilder, OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
 
 import { Logger } from 'nestjs-pino';
 
+import { AppLoggerService } from '@app/shared/app-logger/app-logger.service';
+
 import { version } from '../package.json';
 
 import { AppModule } from './app.module';
@@ -16,6 +18,8 @@ async function bootstrap(): Promise<void> {
   const pinoLogger = app.get(Logger);
   app.useLogger(pinoLogger);
   const configService = app.get(ConfigService);
+  const appLoggerService = await app.resolve(AppLoggerService);
+
   const PORT: string = configService.get('APP_PORT');
 
   const config = new DocumentBuilder()
@@ -29,5 +33,8 @@ async function bootstrap(): Promise<void> {
   SwaggerModule.setup('api', app, documentFactory);
 
   await app.listen(+PORT);
+  appLoggerService.info(`🚀 Application is running on port ${PORT}`, {
+    context: 'bootstrap',
+  });
 }
 void bootstrap();
