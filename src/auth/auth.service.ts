@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
+import { InjectMetric } from '@willsoto/nestjs-prometheus';
+import { Counter } from 'prom-client';
+
 import { SessionService } from '@app/session/session.service';
 import { AppCodes } from '@app/shared/app-codes.enum';
 import { AppResponse } from '@app/shared/app-response.dto';
@@ -13,6 +16,12 @@ import {
   INewUser,
   IUser,
 } from '@app/shared/interfaces/user/users.interface';
+import {
+  MetricCause,
+  MetricLabel,
+  MetricName,
+  MetricStatus,
+} from '@app/shared/metrics/metrics.constant';
 
 import { UsersService } from '../user/user.service';
 
@@ -23,11 +32,19 @@ export class AuthService {
     private sessionService: SessionService,
     private bcryptService: BcryptService,
     private jwtService: JwtService,
+    @InjectMetric(MetricName.LOGIN_TOTAL)
+    private readonly loginCounter: Counter<MetricLabel>,
+    @InjectMetric(MetricName.REGISTRATION_TOTAL)
+    private readonly signupCounter: Counter<MetricLabel>,
   ) {}
 
   async signup({ name, email, password }: INewUser): Promise<AppResponse<IAuthProfileToken>> {
     const isExists = await this.userService.findByEmail(email);
     if (isExists) {
+      this.signupCounter.inc({
+        [MetricLabel.STATUS]: MetricStatus.FAIL,
+        [MetricLabel.CAUSE]: MetricCause.INVALID_EMAIL,
+      });
       return new AppResponse({ code: AppCodes.INVALID_EMAIL });
     }
 
@@ -43,6 +60,10 @@ export class AuthService {
 
     const data = await this.generateProfilePayload(user, session.sessionId);
 
+    this.signupCounter.inc({
+      [MetricLabel.STATUS]: MetricStatus.SUCCESS,
+    });
+
     return new AppResponse({
       code: AppCodes.USER_CREATED,
       data,
@@ -57,12 +78,22 @@ export class AuthService {
       createdAt: true,
       id: true,
     });
+
     if (!existingUser) {
+      this.loginCounter.inc({
+        [MetricLabel.STATUS]: MetricStatus.FAIL,
+        [MetricLabel.CAUSE]: MetricCause.BAD_REQUEST,
+      });
       return new AppResponse({ code: AppCodes.BAD_REQUEST });
     }
 
     const isValidPassword = await this.bcryptService.validate(password, existingUser.password);
+
     if (!isValidPassword) {
+      this.loginCounter.inc({
+        [MetricLabel.STATUS]: MetricStatus.FAIL,
+        [MetricLabel.CAUSE]: MetricCause.INVALID_CREDENTIALS,
+      });
       return new AppResponse({ code: AppCodes.INVALID_CREDENTIALS });
     }
 
@@ -71,6 +102,10 @@ export class AuthService {
     const session = await this.sessionService.createNewSession(existingUser);
 
     const data = await this.generateProfilePayload(existingUser, session.sessionId);
+
+    this.loginCounter.inc({
+      [MetricLabel.STATUS]: MetricStatus.SUCCESS,
+    });
 
     return new AppResponse({
       code: AppCodes.OPERATION_SUCCESS,

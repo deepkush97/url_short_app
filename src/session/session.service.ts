@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { InjectMetric } from '@willsoto/nestjs-prometheus';
+import { Counter } from 'prom-client';
 import { Repository } from 'typeorm';
 
 import { CACHE_TTL_IN_SECONDS } from '@app/app.constant';
@@ -8,6 +10,7 @@ import { CacheService } from '@app/shared/cache/cache.service';
 import { AuthSessionEnum } from '@app/shared/enums/auth-session.enum';
 import { ISession } from '@app/shared/interfaces/session/session.interface';
 import { ICurrentUser, IUser } from '@app/shared/interfaces/user/users.interface';
+import { MetricLabel, MetricName, MetricStatus } from '@app/shared/metrics/metrics.constant';
 import { UsersService } from '@app/user/user.service';
 
 import { Session } from './entities/session.entity';
@@ -19,6 +22,8 @@ export class SessionService {
     private readonly sessionRepository: Repository<Session>,
     private readonly userService: UsersService,
     private readonly cacheService: CacheService,
+    @InjectMetric(MetricName.SESSION_TOTAL)
+    private readonly counter: Counter<MetricLabel>,
   ) {}
 
   async createNewSession(user: IUser): Promise<ICurrentUser> {
@@ -27,7 +32,9 @@ export class SessionService {
       status: AuthSessionEnum.OPEN,
     });
     const session = await this.sessionRepository.save(newSession);
-
+    this.counter.inc({
+      [MetricLabel.STATUS]: MetricStatus.OPEN,
+    });
     return this.prepareSessionPayload(session, user);
   }
 
@@ -61,7 +68,17 @@ export class SessionService {
   }
 
   async closeAllSession(userId: number): Promise<boolean> {
-    await this.sessionRepository.update({ userId }, { status: AuthSessionEnum.CLOSED });
+    const result = await this.sessionRepository.update(
+      { userId, status: AuthSessionEnum.OPEN },
+      { status: AuthSessionEnum.CLOSED },
+    );
+
+    if (result.affected > 0) {
+      this.counter.inc({
+        [MetricLabel.STATUS]: MetricStatus.CLOSED,
+      });
+    }
+
     return true;
   }
 
@@ -70,6 +87,9 @@ export class SessionService {
       this.sessionRepository.update({ guid }, { status: AuthSessionEnum.CLOSED }),
       this.cacheService.del(guid),
     ]);
+    this.counter.inc({
+      [MetricLabel.STATUS]: MetricStatus.CLOSED,
+    });
     return true;
   }
 }
