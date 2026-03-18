@@ -32,6 +32,48 @@ services:
       - 6379:6379
     networks:
       - backend
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: localhost/nestjs-app:v1
+    pull_policy: never
+    ports:
+      - '${APP_PORT}:${APP_PORT}'
+    env_file:
+      - .env.image
+    labels:
+      - 'prometheus.scrape=true'
+      - 'prometheus.port=${APP_PORT}'
+    depends_on:
+      - redis
+      - mysql
+    networks:
+      - backend
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - '9090:9090'
+    networks:
+      - backend
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - '3000:3000'
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus
+    networks:
+      - backend
+
 volumes:
   mysql_data:
   redis_data:
