@@ -5,6 +5,7 @@ import { InjectMetric } from '@willsoto/nestjs-prometheus';
 import { Counter } from 'prom-client';
 import { Repository } from 'typeorm';
 
+import { CACHE_TTL_IN_SECONDS } from '@app/app.constant';
 import { AppLoggerService } from '@app/shared/app-logger/app-logger.service';
 import { Base62Service } from '@app/shared/base62/base62.service';
 import { CacheService } from '@app/shared/cache/cache.service';
@@ -45,7 +46,7 @@ export class UrlService {
     const url = this.urlRepository.create(newUrl);
     const urlData = await this.urlRepository.save(url);
 
-    await this.cacheService.set(code, { url: input.url });
+    await this.cacheService.set(code, { url: input.url }, CACHE_TTL_IN_SECONDS);
 
     return urlData;
   }
@@ -60,7 +61,7 @@ export class UrlService {
       return null;
     }
 
-    await this.cacheService.set(code, { url: existingUrl.url });
+    await this.cacheService.set(code, { url: existingUrl.url }, CACHE_TTL_IN_SECONDS);
     this.counter.inc({
       [MetricLabel.SOURCE]: MetricDataSource.DATABASE,
       [MetricLabel.STATUS]: MetricStatus.SUCCESS,

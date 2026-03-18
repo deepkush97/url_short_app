@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
+import { CACHE_TTL_IN_SECONDS } from '@app/app.constant';
 import { CacheService } from '@app/shared/cache/cache.service';
 import { AuthSessionEnum } from '@app/shared/enums/auth-session.enum';
 import { ISession } from '@app/shared/interfaces/session/session.interface';
@@ -51,7 +52,7 @@ export class SessionService {
 
     const { password: _, updatedAt: __, ...rest } = user;
     const sessionPayload = { ...rest, sessionId };
-    await this.cacheService.set(sessionId, sessionPayload);
+    await this.cacheService.set(sessionId, sessionPayload, CACHE_TTL_IN_SECONDS);
     return sessionPayload;
   }
 
