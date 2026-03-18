@@ -4,10 +4,7 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "deleteOutDir": true,
-    "webpack": true,
-    "builder": {
-      "type": "swc"
-    }
+    "webpack": true
   },
   "projects": {
     "shared": {
