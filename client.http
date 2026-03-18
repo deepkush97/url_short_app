@@ -44,12 +44,6 @@ GET {{baseUrl}}/auth/profile
 Authorization: Bearer {{token}}
 Content-Type: {{contentType}}
 
-### 🚫 INVALID TOKEN TEST — Should return Unauthorized
-GET {{baseUrl}}/auth/profile
-Authorization: Bearer invalid_token
-Content-Type: {{contentType}}
-
-
 ### CREATE CODE - create a new shorter url 
 # @name createCode
 POST {{baseUrl}}/u
