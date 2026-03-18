@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 
 import Redis from 'ioredis';
 
@@ -6,7 +6,7 @@ import { AppLoggerService } from '../app-logger/app-logger.service';
 import { RedisService } from '../redis/redis.service';
 
 @Injectable()
-export class RangeAllocatorService {
+export class RangeAllocatorService implements OnModuleInit {
   private redis: Redis;
   private currentId = 0;
   private maxId = 0;
@@ -16,7 +16,9 @@ export class RangeAllocatorService {
   constructor(
     private readonly redisService: RedisService,
     private readonly logger: AppLoggerService,
-  ) {
+  ) {}
+
+  onModuleInit(): void {
     this.redis = this.redisService.getClient();
   }
 
