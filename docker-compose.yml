@@ -40,12 +40,12 @@ services:
     image: localhost/nestjs-app:v1
     pull_policy: never
     ports:
-      - '${APP_PORT}:${APP_PORT}'
+      - '4002:4002'
     env_file:
       - .env.image
     labels:
       - 'prometheus.scrape=true'
-      - 'prometheus.port=${APP_PORT}'
+      - 'prometheus.port=4002'
     depends_on:
       - redis
       - mysql
