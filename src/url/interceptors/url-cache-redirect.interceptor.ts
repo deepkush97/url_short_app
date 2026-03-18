@@ -1,10 +1,18 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 
+import { InjectMetric } from '@willsoto/nestjs-prometheus';
+import { Counter } from 'prom-client';
 import { Observable, of } from 'rxjs';
 
 import { AppLoggerService } from '@app/shared/app-logger/app-logger.service';
 import { CacheService } from '@app/shared/cache/cache.service';
+import {
+  MetricDataSource,
+  MetricLabel,
+  MetricName,
+  MetricStatus,
+} from '@app/shared/metrics/metrics.constant';
 
 @Injectable()
 export class CacheRedirectInterceptor implements NestInterceptor {
@@ -12,6 +20,8 @@ export class CacheRedirectInterceptor implements NestInterceptor {
     private readonly cacheService: CacheService,
     private readonly adapterHost: HttpAdapterHost,
     private readonly logger: AppLoggerService,
+    @InjectMetric(MetricName.REDIRECT_TOTAL)
+    private readonly counter: Counter<MetricLabel>,
   ) {}
 
   async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<unknown>> {
@@ -34,6 +44,10 @@ export class CacheRedirectInterceptor implements NestInterceptor {
       if (cachedUrl) {
         const { httpAdapter } = this.adapterHost;
         this.logger.debug('Redirecting ...', { context: CacheRedirectInterceptor.name });
+        this.counter.inc({
+          [MetricLabel.SOURCE]: MetricDataSource.CACHE,
+          [MetricLabel.STATUS]: MetricStatus.SUCCESS,
+        });
         httpAdapter.redirect(response, 302, cachedUrl);
         return of(null);
       }
