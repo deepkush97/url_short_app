@@ -1,0 +1,104 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: url-shortener-api
+  namespace: url-shortener-stack
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: url-shortener-api
+  template:
+    metadata:
+      labels:
+        app: url-shortener-api
+    spec:
+      containers:
+        - name: url-shortener-api
+          image: ghcr.io/deepkush97/url_short_app:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 4002
+          resources:
+            requests:
+              memory: '128Mi'
+              cpu: '100m'
+            limits:
+              memory: '256Mi'
+              cpu: '300m'
+          # envFrom:
+          # - configMapRef:
+          #   name: url-shortener-config
+          # - secretRef:
+          #   name: app-secrets
+          env:
+            - name: APP_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: url-shortener-config
+                  key: APP_PORT
+            - name: APP_LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: url-shortener-config
+                  key: APP_LOG_LEVEL
+            - name: APP_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: url-shortener-config
+                  key: APP_ENV
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: url-shortener-config
+                  key: DB_HOST
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: url-shortener-config
+                  key: DB_PORT
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: url-shortener-config
+                  key: DB_USER
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: DB_USER_PASS
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: url-shortener-config
+                  key: DB_NAME
+            - name: DB_LOGGING
+              valueFrom:
+                configMapKeyRef:
+                  name: url-shortener-config
+                  key: DB_LOGGING
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: JWT_SECRET
+            - name: JWT_EXPIRATION_TIME_IN_SECONDS
+              valueFrom:
+                configMapKeyRef:
+                  name: url-shortener-config
+                  key: JWT_EXPIRATION_TIME_IN_SECONDS
+            - name: REDIS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: url-shortener-config
+                  key: REDIS_HOST
+            - name: REDIS_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: url-shortener-config
+                  key: REDIS_PORT
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: REDIS_PASSWORD
