@@ -15,8 +15,7 @@ ENV NODE_ENV=production
 
 COPY --from=builder /usr/src/app/dist ./dist
 
-
-
+COPY --from=builder /usr/src/app/node_modules ./node_modules
 
 RUN addgroup -g 1001 -S nodejs && \
     adduser -S nestjs -u 1001 && \
