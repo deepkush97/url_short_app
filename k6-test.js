@@ -64,5 +64,13 @@ export default async function () {
     sleep(0.5);
   }
 
+  // 5. Profile
+  let profileRes = http.get(`${BASE_URL}/auth/profile`, authParams);
+  check(profileRes, { profile: (r) => r.status === 200 });
+
+  // 6. Logout
+  let logoutRes = http.post(`${BASE_URL}/auth/logout`, {}, authParams);
+  check(logoutRes, { logout: (r) => r.status === 200 });
+
   sleep(1);
 }
